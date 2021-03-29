@@ -6,6 +6,7 @@ from mainframe import settings
 from django.db import models
 from functools import reduce
 import pytz
+from . import handicap
 #from .resources import FullNameResource
 
 #to set a date for an event
@@ -31,10 +32,12 @@ class Player(models.Model):
     A model for a Human player.
     """
     full_name = models.CharField(max_length=100, default='',)
-    team_name = models.CharField(max_length=100,default=" ",verbose_name="Team",blank=False)
+    team_name = models.ForeignKey(Team,on_delete=models.SET_DEFAULT,max_length=100,default=" ",blank=False)
     #email_address = models.EmailField(blank=True, null=True)
     #phone_number = models.CharField(max_length=50, blank=True, null=True)
     initial_handicap = models.FloatField(blank=True, null=True, default=None)
+    #jon added: current_handicap = models.IntegerField(blank=True, null=True, default=None)
+
 
 #    @property
  #   def full_name(self):
@@ -83,38 +86,38 @@ class Player(models.Model):
 #        return "(%s) %s" % (self.league_set.all() and self.league_set.get() or "None", self.player.full_name)
 
 
-class Hole(models.Model):
-    number = models.IntegerField()
-    par = models.IntegerField(default=3)
-    length = models.IntegerField(blank=True, null=True)
-    notes = models.TextField(blank=True, null=True)
+#class Hole(models.Model):
+ #   number = models.IntegerField()
+  #  par = models.IntegerField(default=3)
+   # length = models.IntegerField(blank=True, null=True)
+    #notes = models.TextField(blank=True, null=True)
 
-    def __str__(self):
-        return "Hole %s (Par %s)%s" % (self.number, self.par, self.layout_set.all() and " - %s" % self.layout_set.filter() or "")
-
-
-class Layout(models.Model):
-    name = models.CharField(max_length=50)
-    holes = models.ManyToManyField(Hole)
-
-    @property
-    def par(self):
-        return sum([h.par for h in self.holes.all()])
-
-    def __str__(self):
-        return "%s (Par %s)" % (self.name, self.par)
-
-    @property
-    def hole_count(self):
-        return self.holes.count()
+    #def __str__(self):
+     #   return "Hole %s (Par %s)%s" % (self.number, self.par, self.layout_set.all() and " - %s" % self.layout_set.filter() or "")
 
 
-class Course(models.Model):
-    name = models.CharField(max_length=50)
-    layouts = models.ManyToManyField(Layout)
+#class Layout(models.Model):
+ #   name = models.CharField(max_length=50)
+  #  holes = models.ManyToManyField(Hole)
 
-    def __str__(self):
-        return self.name
+   # @property
+    #def par(self):
+     #   return sum([h.par for h in self.holes.all()])
+
+#    def __str__(self):
+ #       return "%s (Par %s)" % (self.name, self.par)
+
+  #  @property
+   # def hole_count(self):
+    #    return self.holes.count()
+
+
+#class Course(models.Model):
+ #   name = models.CharField(max_length=50, null=True,default="")
+    #layouts = models.ManyToManyField(Layout)
+
+  #  def __str__(self):
+   #     return self.name
 
 
 class Score(models.Model):
@@ -130,8 +133,11 @@ class Score(models.Model):
 
 
 class Card(models.Model):
-    course = models.ForeignKey(Course,on_delete=models.CASCADE,)
-    layout = models.ForeignKey(Layout,on_delete=models.CASCADE,)
+    """
+    Model for card to be added to an event
+    """
+    #course = models.ForeignKey(Course,null=True,default="",on_delete=models.CASCADE,)
+    #layout = models.ForeignKey(Layout,on_delete=models.CASCADE,)
     date = models.DateTimeField()
     scores = models.ManyToManyField(Score, blank=True)
 
@@ -163,7 +169,7 @@ class Card(models.Model):
                 result[contestant]["scratch_score"] = "DNF"
                 result[contestant]["scratch_delta"] = "-"
             else:
-                scratch_delta = scratch_score - self.layout.par
+                scratch_delta = scratch_score - 36  #self.layout.par
                 result[contestant]["scratch_score"] = scratch_score
                 result[contestant]["scratch_delta"] = str(scratch_delta) if scratch_delta < 1 else "+%s" % scratch_delta
         # sort by rank
@@ -184,7 +190,7 @@ class Award(models.Model):
     Generic award model, eg. Closest to Pin
     """
     name = models.CharField(max_length=50, blank=True, null=True)
-    contestant = models.ForeignKey(Player,on_delete=models.CASCADE,)
+    contestant = models.ForeignKey(Player,on_delete=models.CASCADE)
 
     def __str__(self):
         return "%s: %s" % (self.name, self.contestant.full_name)
@@ -194,9 +200,9 @@ class Event(models.Model):
     """
     Generic event model, eg. a league day
     """
-    name = models.CharField(max_length=50, blank=True, null=True, help_text="Name of event, eg 'September League Day'")
+    name = models.CharField(max_length=50, blank=True, null=True, help_text="Name of event, e.g. 'Week 1 - March 31'")
     date = models.DateTimeField()
-    rounds = models.IntegerField(help_text="Number of rounds that players are required to complete during this league event")
+    rounds = models.IntegerField(help_text="Number of rounds that players are required to complete during this league event",default=1)
     awards = models.ManyToManyField(Award, blank=True)
     cards = models.ManyToManyField(Card, blank=True)
 
@@ -222,18 +228,7 @@ class Event(models.Model):
     def render_date(self):
         return self.date.strftime(date_format)
 
-    def get_points(self, rank):
-        """
-        reutrns points earned for a player ranked at specified rank (zero indexed).
-        if rank < 0 (eg. -1), minimum points attanable is returned (eg. if player
-        did not complete Event.rounds rounds, then they earned minimum points for
-        attendance, eg one point.
-        """
-        league_points = self.league_set.get().get_league_points()
-        if 0 > rank or rank >= len(league_points):
-            return league_points[-1]
-        return league_points[rank]
-
+    
     @staticmethod
     def get_previous_handicap(event, contestant):
         try:

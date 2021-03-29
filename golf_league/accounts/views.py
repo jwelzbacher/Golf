@@ -5,8 +5,8 @@ from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
-def home(request):
-    return render(request,'index.html')
+#def home(request):
+ #   return render(request,'index.html')
 
 @login_required
 def mainframe(request):

@@ -20,22 +20,22 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
 #        fields = ('player', 'initial_handicap')
 
 
-class HoleSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = models.Hole
-        fields = ('number', 'par')
+#class HoleSerializer(serializers.HyperlinkedModelSerializer):
+ #   class Meta:
+  #      model = models.Hole
+   #     fields = ('number', 'par')
 
 
-class LayoutSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = models.Layout
-        fields = ('name', 'holes')
+#class LayoutSerializer(serializers.HyperlinkedModelSerializer):
+ #   class Meta:
+  #      model = models.Layout
+   #     fields = ('name', 'holes')
 
 
-class CourseSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = models.Course
-        fields = ('name', 'layouts')
+#class CourseSerializer(serializers.HyperlinkedModelSerializer):
+ #   class Meta:
+  #      model = models.Course
+   #     fields = ('name', 'layouts')
 
 
 class ScoreSerializer(serializers.HyperlinkedModelSerializer):

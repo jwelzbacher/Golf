@@ -12,21 +12,21 @@ from import_export.widgets import ForeignKeyWidget
 from .resources import *
 
 @admin.register(Player)
-class TeamNameAdmin(ImportExportModelAdmin):
-           resource_class = TeamNameResource
-           list_display = 'id','full_name','team_name','initial_handicap'
+#class TeamNameAdmin(ImportExportModelAdmin):
+ #          resource_class = TeamNameResource
+  #         list_display = 'id','full_name','team_name','initial_handicap'
 
 @admin.register(Team)
 class TeamAdmin(ImportExportModelAdmin):
            resource_class = TeamResource
-           list_display = 'team','points'
+          # list_display = ('team','points')
 @admin.register(League)
 @admin.register(Card)
-@admin.register(Course)
+#@admin.register(Course)
 @admin.register(Event)
-@admin.register(Layout)
+#@admin.register(Layout)
 #@admin.register(Contestant)
-@admin.register(Hole)
+#@admin.register(Hole)
 @admin.register(Award)
 @admin.register(Score)
 

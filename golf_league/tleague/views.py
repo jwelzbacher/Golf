@@ -14,15 +14,26 @@ from tleague import models
 
 @cache_per(None, username="all")
 def tleague(request):
+    return render(request,'index.html')
+
+@cache_per(None, username="all")
+def standings(request):
+    teams = models.Team.objects.all()
+    return render(request, 'standings.html', {"teams":teams})
+
+@cache_per(None, username="all")
+def scores(request):
     context = {
            'leagues': models.League.objects.all()
           }
-    return render(request, 'tleague.html', context)
+    return render(request, 'scores.html', context)
 
-#@cache_per(None, username="all")
-def teams(request):
-    teams = models.Team.objects.all()
-    return render(request, 'thursday.html', {"teams":teams})
+@cache_per(None, username="all")
+def handicaps(request):
+    context = {
+           'leagues': models.League.objects.all()
+          }
+    return render(request, 'handicaps.html', context)
 
 ##### API Views ####
 
@@ -50,29 +61,29 @@ class TeamViewSet(viewsets.ModelViewSet):
 #    serializer_class = ContestantSerializer
 
 
-class HoleViewSet(viewsets.ModelViewSet):
+#class HoleViewSet(viewsets.ModelViewSet):
     """
     A simple model to represent a hole.
     """
-    queryset = models.Hole.objects.all()
-    serializer_class = HoleSerializer
+    #queryset = models.Hole.objects.all()
+   # serializer_class = HoleSerializer
 
 
-class LayoutViewSet(viewsets.ModelViewSet):
+#class LayoutViewSet(viewsets.ModelViewSet):
     """
     A model to represent a Layout of a series of Hole objects.
     Courses relate to one or more Layouts.
     """
-    queryset = models.Layout.objects.all()
-    serializer_class = LayoutSerializer
+ #   queryset = models.Layout.objects.all()
+  #  serializer_class = LayoutSerializer
 
 
-class CourseViewSet(viewsets.ModelViewSet):
+#class CourseViewSet(viewsets.ModelViewSet):
     """
     A model to represent a DG course that can contain one or more Layouts.
     """
-    queryset = models.Course.objects.all()
-    serializer_class = CourseSerializer
+ #   queryset = models.Course.objects.all()
+  #  serializer_class = CourseSerializer
 
 
 class ScoreViewSet(viewsets.ModelViewSet):

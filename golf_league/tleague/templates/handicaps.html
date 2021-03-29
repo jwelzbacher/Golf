@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block body %}
+
+	<title>Thursday Night League Scores</title>
+	
+
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h1>Handicaps</h1>
+                    {% for event in league.events.all %}
+                    <button class="btn-block btn-link" data-toggle="collapse" data-target="#event_{{ event.id }}">{{ event.name }} on {{ event.render_date }}</button>
+                    <div id="event_{{ event.id }}" class="collapse">
+                      {{ event.cards.last.course }}/{{ event.cards.last.layout }} Layout, Par {{ event.cards.last.layout.par }}
+                    <small>
+                    <table class="table table-striped text-left">
+                      <tr>
+                        <th>Rank</th><th>Player</th><th>Rounds Completed</th><th>HC</th><th>HC Score</th><th>Points Earned</th><th>Awards</th></tr>
+                        {% for contestant, stats in event.result.items %}
+                        <tr>
+                          <td>
+                            {% if stats.points_earned %}
+                              {{ stats.rank }}
+                            {% else %}
+                              <span class="pop glyphicon glyphicon-question-sign" data-toggle="popover" data-content="HC required for rank (Must play {{ league.handicap_min_rounds }} rounds)." style="cursor: pointer; color: #18BC9C;">
+                              </span>
+                            {% endif %}
+                          </td>
+                          <td>{{ contestant.player }}</td>
+                          <td>{{ stats.round_count }} of {{ event.rounds }}</td>
+                          <td>{% if stats.previous_handicap != None %}{{ stats.previous_handicap }}{% else %}-{% endif %}</td>
+                          <td>
+                            {% if stats.handicap_score == None or stats.handicap_score == 0 %}
+                              -
+                            {% else %}
+                              {{ stats.handicap_score }}
+                            {% endif %}
+                          </td>
+                          <td>{% if stats.points_earned != None %}{{ stats.points_earned }}{% else %}-{% endif %}</td>
+                          <td>{% if stats.awards %}{% for award in stats.awards %}{% if forloop.counter0 != 0 %}<br />{% endif %}{{ award }}{% endfor %}{% else %}-{% endif %}</td>
+                        </tr>
+                      {% endfor %}
+                    </table>
+                    </small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+
+{% endblock%}

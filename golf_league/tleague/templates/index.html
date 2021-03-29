@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block body %}
+{% load static %}
+   <!-- Contact Section -->
+    <section id="about" class="odd-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h1>About</h1>
+                    League Tracking App for Far Oaks Thursday Night League.<br />
+                    <p>Developed by Jon Welzbacher in Django (a python web app framework)</p>
+                    <br />
+                    <a href="mailto:jonwelzbacher@gmail.com?Subject=Golf%20League%20Tracker" target="_top"><img src="{% static 'img/email_icon.ico' %}" alt="Email the developer"></a>
+                    <a href="https://github.com/jwelzbacher/tleague" target="_top"><img src="{% static 'img/github_icon.ico' %}" alt="Github project page"></a><br />
+                    <br>
+                    <img src="{% static 'img/faroaks.png' %}">
+                    <br />
+        
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
