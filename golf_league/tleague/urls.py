@@ -2,7 +2,7 @@ from django.views.generic.base import RedirectView
 from django.conf.urls import include, url
 from rest_framework import routers
 from django.contrib import admin
-#from django.urls import path
+from django.urls import path
 from . import views
 
 
@@ -21,11 +21,12 @@ router.register(r'api/card', views.CardViewSet)
 router.register(r'api/award', views.AwardViewSet)
 router.register(r'api/event', views.EventViewSet)
 router.register(r'api/league', views.LeagueViewSet)
+router.register(r'api/handicaps', views.HandicapViewSet)
 
 urlpatterns = [
 
 #Home
-	#	path('', views.tleague, name='tleague'),
+	path('', views.tleague, name='tleague'),
     #path('standings/', views.standings, name='standings'),
 
 
@@ -33,7 +34,7 @@ urlpatterns = [
     
     url(r'^favicon\.ico$', RedirectView.as_view(permanent=False, url='/static/favicon.ico')),
     #url(r'^admin/', admin.site.urls),
-    url(r'^$', views.tleague, name='tleague'),
+    #url(r'^$', views.tleague, name='tleague'),
     url(r'^standings/', views.standings, name='standings'),
     url(r'^handicaps/', views.handicaps, name='handicaps'),
     url(r'^scores/', views.scores, name='scores'),

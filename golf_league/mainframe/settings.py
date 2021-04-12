@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'accounts',
     'tleague',
     'import_export',
-    'rest_framework'
+    'rest_framework',
+    'gsheets'
 ]
 
 # Cache setting

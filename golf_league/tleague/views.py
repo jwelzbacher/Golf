@@ -30,10 +30,8 @@ def scores(request):
 
 @cache_per(None, username="all")
 def handicaps(request):
-    context = {
-           'leagues': models.League.objects.all()
-          }
-    return render(request, 'handicaps.html', context)
+    handicaps = models.Handicap.objects.all()
+    return render(request, 'handicaps.html', {"handicaps":handicaps})
 
 ##### API Views ####
 
@@ -84,6 +82,14 @@ class TeamViewSet(viewsets.ModelViewSet):
     """
  #   queryset = models.Course.objects.all()
   #  serializer_class = CourseSerializer
+
+class HandicapViewSet(viewsets.ModelViewSet):
+    """
+    A simple view that stores the scratch score of a Contestant after a round. Cards relate to
+    one Score per player on a Card.
+    """
+    queryset = models.Handicap.objects.all()
+    serializer_class = HandicapSerializer
 
 
 class ScoreViewSet(viewsets.ModelViewSet):

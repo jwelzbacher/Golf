@@ -2,29 +2,43 @@ from import_export import fields, resources
 from import_export.widgets import ForeignKeyWidget
 from .models import *
 
-
-class TeamNameResource(resources.ModelResource):
-    team_name = fields.Field(
-       column_name='team_name',
-       attribute='team_name',
-       widget=ForeignKeyWidget(Player, 'team_name')
-       )
+#Team Name resource for Team class to set import ID to team
+class TeamIdResource(resources.ModelResource):
 
     class Meta:
-        fields = ('team',)
+        model = Team
+        exclude = ('id',)
+        import_id_fields = ['team']
+        #fields = ('id','team','points')
 
 
 
-class TeamResource(resources.ModelResource):
-    team = fields.Field(
-        column_name='team',
-        attribute='team',
+#team resource for import/export to the Players
+class PlayerTeamResource(resources.ModelResource):
+    team_name = fields.Field(
+        column_name='team_name',
+        attribute='team_name',
         widget=ForeignKeyWidget(Team, 'team')
         )
     class Meta:
-        model = Team
-        skip_unchanged = True
-        report_skipped = True
+        model = Player
+        fields = ('id','team_name__team','full_name','initial_handicap',)
+
+
+#Score model resource for import/export to the Players full_name
+class ScoreFullName(resources.ModelResource):
+
+    class Meta:
+      model = Score
+      exclude = ('id',)
+      import_id_fields = ['contestant']
+
+
+#Handicap model resource for import/export handicaps 
+class HandicapPlayer(resources.ModelResource):
+
+    class Meta:
+        model = Handicap
         exclude = ('id',)
-        import_id_fields = ('team',)
-        fields = ('team','points',)
+        import_id_fields = ['player','handicap']
+        #fields = ('id','team','points')

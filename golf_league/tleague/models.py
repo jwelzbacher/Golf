@@ -20,7 +20,7 @@ class Team(models.Model):
     A model for a Team in a League. 
     Links to players and and scoring to determine standings in a League.
     """
-    team = models.CharField(max_length=150, default='', primary_key=True)
+    team = models.CharField(max_length=150, default='', primary_key=True, blank=False)
     points = models.IntegerField(blank=True, default=0)
 
     def __str__(self):
@@ -30,9 +30,9 @@ class Team(models.Model):
 class Player(models.Model):
     """
     A model for a Human player.
-    """
-    full_name = models.CharField(max_length=100, default='',)
-    team_name = models.ForeignKey(Team,on_delete=models.SET_DEFAULT,max_length=100,default=" ",blank=False)
+    """ 
+    full_name = models.CharField(max_length=100, default='',unique=True)
+    team_name = models.ForeignKey(Team,on_delete=models.SET_DEFAULT,to_field='team',default='',)
     #email_address = models.EmailField(blank=True, null=True)
     #phone_number = models.CharField(max_length=50, blank=True, null=True)
     initial_handicap = models.FloatField(blank=True, null=True, default=None)
@@ -71,6 +71,15 @@ class Player(models.Model):
     def __str__(self):
        return "(%s) - %s - Team: %s" % (self.league_set.all() and self.league_set.get() or "None", self.full_name, self.team_name)
 
+class Handicap(models.Model):
+    """
+    A model for storing handicaps by player.
+    """ 
+    handicap = models.IntegerField(default=0, blank=True, null=True)
+    player = models.ForeignKey(Player,on_delete=models.CASCADE, to_field="full_name")
+
+    def __str__(self):
+           return "(%s) - Handicap: %s" % (self.player, self.handicap)
 
 #class Contestant(models.Model):
     """
@@ -124,9 +133,9 @@ class Score(models.Model):
     """
     Model for overall scratch score for a player on a card after their round
     """
-    contestant = models.ForeignKey(Player,on_delete=models.CASCADE,)
+    contestant = models.ForeignKey(Player,on_delete=models.CASCADE, to_field='full_name', null=True)
     strokes = models.IntegerField(blank=True, null=True)
-    date = models.DateTimeField()
+    date = models.DateField()
 
     def __str__(self):
         return "%s - %s - %s" % (self.strokes or "DNF", self.date.strftime(date_format), self.contestant.full_name)
@@ -138,7 +147,7 @@ class Card(models.Model):
     """
     #course = models.ForeignKey(Course,null=True,default="",on_delete=models.CASCADE,)
     #layout = models.ForeignKey(Layout,on_delete=models.CASCADE,)
-    date = models.DateTimeField()
+    date = models.DateField()
     scores = models.ManyToManyField(Score, blank=True)
 
     @property
@@ -201,7 +210,7 @@ class Event(models.Model):
     Generic event model, eg. a league day
     """
     name = models.CharField(max_length=50, blank=True, null=True, help_text="Name of event, e.g. 'Week 1 - March 31'")
-    date = models.DateTimeField()
+    date = models.DateField()
     rounds = models.IntegerField(help_text="Number of rounds that players are required to complete during this league event",default=1)
     awards = models.ManyToManyField(Award, blank=True)
     cards = models.ManyToManyField(Card, blank=True)
@@ -321,14 +330,14 @@ class Event(models.Model):
                 rank = index
             event_result[contestant]['rank'] = rank + 1
         # assign points earned
-        for contestant in event_result:
-            if event_result[contestant]['handicap_score'] == None:
-                event_result[contestant]['points_earned'] = None
-            elif event_result[contestant]['round_count'] < self.rounds:
+        #for contestant in event_result:
+         #   if event_result[contestant]['handicap_score'] == None:
+          #      event_result[contestant]['points_earned'] = None
+           # elif event_result[contestant]['round_count'] < self.rounds:
                 # player completed less than the required rounds, assign minimum possible points. 
-                event_result[contestant]['points_earned'] = self.get_points(-1)
-            else:
-                event_result[contestant]['points_earned'] = self.get_points(event_result[contestant]["rank"] - 1)
+            #    event_result[contestant]['points_earned'] = self.get_points(-1)
+            #else:
+             #   event_result[contestant]['points_earned'] = self.get_points(event_result[contestant]["rank"] - 1)
         return event_result
 
     def __str__(self):
@@ -365,8 +374,8 @@ The number of past cards to consider when chosing the best cards for a player fo
     def __str__(self):
         return "%s" % self.name
 
-    def get_league_points(self):
-        return [int(p.strip()) for p in self.league_points.split(',')]
+    #def get_league_points(self):
+     #   return [int(p.strip()) for p in self.league_points.split(',')]
 
     @property
     def result(self):
@@ -378,7 +387,7 @@ The number of past cards to consider when chosing the best cards for a player fo
                 if not player in standings:
                     standings[player] = defaultdict(int)
                 standings[player]['initial_handicap'] = contestant.initial_handicap
-                standings[player]['points'] += result[contestant]['points_earned'] or 0
+                #standings[player]['points'] += result[contestant]['points_earned'] or 0
                 standings[player]['handicap'] = result[contestant]['handicap']
                 standings[player]['events_attended'] += 1 
                 standings[player]['rounds_played'] += sum([c.scores.filter(contestant=contestant).count() for c in event.cards.all()])
@@ -390,7 +399,7 @@ The number of past cards to consider when chosing the best cards for a player fo
                 standings[player]['valid_hc'] = True
 
         # add rank data
-        standings = OrderedDict(sorted(iter(standings.items()), key=lambda x: x[1]['points'], reverse=True))
+        #standings = OrderedDict(sorted(iter(standings.items()), key=lambda x: x[1]['points'], reverse=True))
         rank = 0
         for player in standings:
             index = list(standings.keys()).index(player)

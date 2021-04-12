@@ -12,14 +12,19 @@ from import_export.widgets import ForeignKeyWidget
 from .resources import *
 
 @admin.register(Player)
-#class TeamNameAdmin(ImportExportModelAdmin):
- #          resource_class = TeamNameResource
-  #         list_display = 'id','full_name','team_name','initial_handicap'
+class TeamNameAdmin(ImportExportModelAdmin):
+           resource_class = PlayerTeamResource
+           list_display = 'id','full_name','team_name','initial_handicap'
 
 @admin.register(Team)
 class TeamAdmin(ImportExportModelAdmin):
-           resource_class = TeamResource
-          # list_display = ('team','points')
+           resource_class = TeamIdResource
+           list_display = ('team','points')
+@admin.register(Handicap)
+class TeamAdmin(ImportExportModelAdmin):
+           resource_class = HandicapPlayer
+           list_display = ('player','handicap')
+
 @admin.register(League)
 @admin.register(Card)
 #@admin.register(Course)
@@ -29,13 +34,16 @@ class TeamAdmin(ImportExportModelAdmin):
 #@admin.register(Hole)
 @admin.register(Award)
 @admin.register(Score)
+class ScoreAdmin(ImportExportModelAdmin):
+    resource_class = ScoreFullName
+    #list_display = ("contestant", "strokes", "date")
 
 
 class ModelAdmin(ImportExportModelAdmin):
     formfield_overrides = {
         models.ManyToManyField: {'widget': FilteredSelectMultiple( "items", False)},
-        #models.ForeignKey: {'widget': Select(attrs={"class": "form-control selectpicker", "data-live-search": "true"})},
-        models.ForeignKey: {'widget': Select(attrs={"class": "form-control"})},
+        models.ForeignKey: {'widget': Select(attrs={"class": "form-control selectpicker", "data-live-search": "true"})},
+        #models.ForeignKey: {'widget': Select(attrs={"class": "form-control"})},
         }
 
     class Media:
