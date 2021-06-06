@@ -82,7 +82,7 @@ ROOT_URLCONF = 'mainframe.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ join_paths(PROJECT_PATH, 'templates'),
+        'DIRS': [join_paths(PROJECT_PATH, 'templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
