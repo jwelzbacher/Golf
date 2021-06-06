@@ -14,10 +14,10 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
         model = models.Player
         fields = '__all__'
 
-class HandicapSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = models.Handicap
-        fields = '__all__'
+#class HandicapSerializer(serializers.HyperlinkedModelSerializer):
+ #   class Meta:
+  #      model = models.Handicap
+   #         fields = '__all__'
 #class ContestantSerializer(serializers.HyperlinkedModelSerializer):
 #    class Meta:
 #        model = models.Contestant

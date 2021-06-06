@@ -36,7 +36,8 @@ class Player(models.Model):
     #email_address = models.EmailField(blank=True, null=True)
     #phone_number = models.CharField(max_length=50, blank=True, null=True)
     initial_handicap = models.FloatField(blank=True, null=True, default=None)
-    #jon added: current_handicap = models.IntegerField(blank=True, null=True, default=None)
+    #jon added: 
+    handicap = models.IntegerField(default=0, blank=True, null=True)
 
 
 #    @property
@@ -71,15 +72,11 @@ class Player(models.Model):
     def __str__(self):
        return "(%s) - %s - Team: %s" % (self.league_set.all() and self.league_set.get() or "None", self.full_name, self.team_name)
 
-class Handicap(models.Model):
+#class Handicap(models.Model):
     """
     A model for storing handicaps by player.
     """ 
-    handicap = models.IntegerField(default=0, blank=True, null=True)
-    player = models.ForeignKey(Player,on_delete=models.CASCADE, to_field="full_name")
 
-    def __str__(self):
-           return "(%s) - Handicap: %s" % (self.player, self.handicap)
 
 #class Contestant(models.Model):
     """
@@ -133,7 +130,7 @@ class Score(models.Model):
     """
     Model for overall scratch score for a player on a card after their round
     """
-    contestant = models.ForeignKey(Player,on_delete=models.CASCADE, to_field='full_name', null=True)
+    contestant = models.OneToOneField(Player,on_delete=models.CASCADE, to_field='full_name', default='')
     strokes = models.IntegerField(blank=True, null=True)
     date = models.DateField()
 

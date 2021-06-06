@@ -7,6 +7,11 @@ from rest_framework import viewsets
 from .cache import cache_per
 from tleague.api.serializers import *
 from tleague import models
+from .models import Player, Player
+from django.db.models import Q
+#from .filters import PlayerFilter
+#from django.views.generic import FormView, ListView
+#from .forms import SearchForm
 
 
 ##### App Views ####
@@ -28,10 +33,23 @@ def scores(request):
           }
     return render(request, 'scores.html', context)
 
-@cache_per(None, username="all")
+#@cache_per(None, username="all")
 def handicaps(request):
-    handicaps = models.Handicap.objects.all()
+    search_post = request.GET.get('search')
+    if search_post:
+        handicaps = Player.objects.filter(Q(full_name__icontains=search_post))
+    else:
+        # If not searched, return default posts
+        handicaps = Player.objects.all()
+
+    #Filtering
+    #myFilter = PlayerFilter(request.GET, queryset=handicaps)
+    #handicaps=myFilter.qs
+
+
     return render(request, 'handicaps.html', {"handicaps":handicaps})
+
+
 
 ##### API Views ####
 
@@ -83,13 +101,13 @@ class TeamViewSet(viewsets.ModelViewSet):
  #   queryset = models.Course.objects.all()
   #  serializer_class = CourseSerializer
 
-class HandicapViewSet(viewsets.ModelViewSet):
+class PlayerViewSet(viewsets.ModelViewSet):
     """
     A simple view that stores the scratch score of a Contestant after a round. Cards relate to
     one Score per player on a Card.
     """
-    queryset = models.Handicap.objects.all()
-    serializer_class = HandicapSerializer
+    queryset = models.Player.objects.all()
+    serializer_class = PlayerSerializer
 
 
 class ScoreViewSet(viewsets.ModelViewSet):

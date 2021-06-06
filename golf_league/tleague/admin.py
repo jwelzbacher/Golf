@@ -14,16 +14,16 @@ from .resources import *
 @admin.register(Player)
 class TeamNameAdmin(ImportExportModelAdmin):
            resource_class = PlayerTeamResource
-           list_display = 'id','full_name','team_name','initial_handicap'
+           list_display = 'id','full_name','team_name','initial_handicap', 'handicap'
 
 @admin.register(Team)
 class TeamAdmin(ImportExportModelAdmin):
            resource_class = TeamIdResource
            list_display = ('team','points')
-@admin.register(Handicap)
-class TeamAdmin(ImportExportModelAdmin):
-           resource_class = HandicapPlayer
-           list_display = ('player','handicap')
+#@admin.register(Handicap)
+#class TeamAdmin(ImportExportModelAdmin):
+ #          resource_class = HandicapPlayer
+  #         list_display = ('player','handicap')
 
 @admin.register(League)
 @admin.register(Card)

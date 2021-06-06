@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'tleague',
     'import_export',
     'rest_framework',
-    'gsheets'
+    'gsheets',
+    'django_filters'
 ]
 
 # Cache setting
@@ -62,6 +63,9 @@ INSTALLED_APPS = [
     #}
 #}
 
+#GSHEETS = {
+#    'CLIENT_SECRETS': '<PATH TO DOWNLOADED CREDENTIALS>'
+#}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

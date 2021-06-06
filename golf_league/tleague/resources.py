@@ -22,7 +22,9 @@ class PlayerTeamResource(resources.ModelResource):
         )
     class Meta:
         model = Player
-        fields = ('id','team_name__team','full_name','initial_handicap',)
+        exclude = ('id',)
+        import_id_fields = ['full_name']
+        fields = ('id','team_name__team','full_name','initial_handicap','handicap')
 
 
 #Score model resource for import/export to the Players full_name
@@ -30,15 +32,5 @@ class ScoreFullName(resources.ModelResource):
 
     class Meta:
       model = Score
-      exclude = ('id',)
+      exclude = ('id',) 
       import_id_fields = ['contestant']
-
-
-#Handicap model resource for import/export handicaps 
-class HandicapPlayer(resources.ModelResource):
-
-    class Meta:
-        model = Handicap
-        exclude = ('id',)
-        import_id_fields = ['player','handicap']
-        #fields = ('id','team','points')
